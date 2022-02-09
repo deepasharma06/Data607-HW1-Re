@@ -1,0 +1,54 @@
+
+# **DATA 607 Week 1 Assignment - Assignment – Loading Data into a Data Frame**
+#### Deepa Sharma
+#### February 9, 2022
+
+## **Introduction:**
+#### The data for this task is taken from fivethirtyeight dataset located @ https://data.fivethirtyeight.com/
+#### The dataset chosen is the Coronavirus poll which is located in the below link:
+#### https://projects.fivethirtyeight.com/coronavirus-polls/
+#### The data in this project is pulled directly from the github repository using the link to the csv file in the code
+#### The goal of this project is to analyze how Biden's approval rating to his Coronavirus response as President is changing across Republicans and Democrats over time.
+#### To perform this analysis, only three columns of data is considered from the given dataset. These columns are end_date of the poll, party affiliation of the respondent, number of approvers.
+#### The summary of  the data is shown as well.
+
+```{r}
+CovidPolls <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/covid-19-polls/master/covid_approval_polls.csv",header = TRUE, sep=",")
+summary(CovidPolls)
+head(CovidPolls)
+```
+#### The following set of code is used to filter the data set to match the criteria for analysis. We are focusing on the response to the question "Do you approve or disapprove of the way President Biden is handling each of the following issues? Coronavirus". The following code is used to create a dataframe with the subset of the data where text column is equal to the questions above.
+```{r}
+mydata <- subset(CovidPolls, text == "Do you approve or disapprove of the way President Biden is handling each of the following issues? Coronavirus")
+mydata <- data.frame(mydata)
+head(mydata)
+```
+
+#### The column names are renamed using the following code. This is not needed but done for aesthetics. The print of the new data frame is also generated at the end.
+```{r}
+names(mydata)[names(mydata)=="end_date"] <- "End_Date"
+names(mydata)[names(mydata)=="party"] <- "Party"
+names(mydata)[names(mydata)=="approve"] <- "Approve"
+names(mydata)[names(mydata)=="disapprove"] <- "Disapprove"
+head(mydata)
+```
+
+#### Two differnt set of plots are created - one each for Republican and Democratic respondents The package ggplot is used in this case.
+
+```{r}
+library(magrittr)
+library(ggplot2)
+library(tidyverse)
+mydata %>% 
+  filter(Party!= "all" & Party!= "I") %>%
+  ggplot(aes(End_Date, Approve, colour = Party))+
+  geom_point(size = 3, alpha = 1)+
+  geom_line(size = 10)+
+  theme_minimal()+
+  labs(title = "Biden's Approval among Republicans and Democrats")
+
+```
+
+
+# **Conclusion:**
+#### In the above plot, we see that President Biden's Coronavirus approval rating has been quite low among Republicans vs. Democrats. Also, it is evident that his approval rating is slowly falling accross both parties even though it is more so with the Republicans. Also, another intersting thing is that the pattern of ups and downs in approval rating of President Biden is very much similar across both parties. For example, his approval rating has been the highest among both parties around the end of June, 2021 and it has dipped to the lowest number in January 2022.
